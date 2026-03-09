@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>AI Rural Health Triage</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#e8f5e9;
+text-align:center;
+}
+
+.card{
+background:white;
+padding:20px;
+width:320px;
+margin:auto;
+margin-top:80px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+button{
+background:#2e7d32;
+color:white;
+border:none;
+padding:10px;
+width:100%;
+margin-top:10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin:5px;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="card" id="login">
+
+<h2>AI Health Triage</h2>
+
+<select id="role">
+
+<option value="patient">Patient</option>
+<option value="asha">ASHA Worker</option>
+
+</select>
+
+<button onclick="login()">Login</button>
+
+</div>
+
+
+<!-- SYMPTOMS -->
+
+<div class="card hidden" id="symptoms">
+
+<h3>Enter Symptoms</h3>
+
+<input id="fever" placeholder="Fever (yes/no)">
+<input id="cough" placeholder="Cough (yes/no)">
+<input id="breath" placeholder="Breathing difficulty (yes/no)">
+
+<button onclick="analyze()">Analyze</button>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div class="card hidden" id="result">
+
+<h3>Triage Result</h3>
+
+<p id="risk"></p>
+<p id="advice"></p>
+
+<button onclick="back()">Back</button>
+
+</div>
+
+
+<!-- ASHA DASHBOARD -->
+
+<div class="card hidden" id="asha">
+
+<h3>ASHA Dashboard</h3>
+
+<div id="patients"></div>
+
+<button onclick="logout()">Logout</button>
+
+</div>
+
+
+<script>
+
+let patients = []
+
+function login(){
+
+let role=document.getElementById("role").value
+
+document.getElementById("login").classList.add("hidden")
+
+if(role=="patient"){
+document.getElementById("symptoms").classList.remove("hidden")
+}
+
+else{
+document.getElementById("asha").classList.remove("hidden")
+updateDashboard()
+}
+
+}
+
+
+function analyze(){
+
+let fever=document.getElementById("fever").value
+let cough=document.getElementById("cough").value
+let breath=document.getElementById("breath").value
+
+let risk=""
+let advice=""
+
+if(breath=="yes"){
+risk="HIGH"
+advice="Emergency referral to hospital"
+}
+
+else if(fever=="yes" && cough=="yes"){
+risk="MEDIUM"
+advice="Visit nearest PHC"
+}
+
+else{
+risk="LOW"
+advice="Home care"
+}
+
+patients.push({risk,advice})
+
+document.getElementById("symptoms").classList.add("hidden")
+document.getElementById("result").classList.remove("hidden")
+
+document.getElementById("risk").innerHTML="Risk: "+risk
+document.getElementById("advice").innerHTML=advice
+
+}
+
+
+function back(){
+
+document.getElementById("result").classList.add("hidden")
+document.getElementById("login").classList.remove("hidden")
+
+}
+
+
+function updateDashboard(){
+
+let html=""
+
+patients.forEach(p=>{
+
+html+=`
+<div style="border:1px solid #ccc;padding:10px;margin:5px">
+Risk: <b>${p.risk}</b><br>
+Advice: ${p.advice}
+</div>
+`
+
+})
+
+document.getElementById("patients").innerHTML=html
+
+}
+
+
+function logout(){
+
+document.getElementById("asha").classList.add("hidden")
+document.getElementById("login").classList.remove("hidden")
+
+}
+
+</script>
+
+</body>
+
+</html>
